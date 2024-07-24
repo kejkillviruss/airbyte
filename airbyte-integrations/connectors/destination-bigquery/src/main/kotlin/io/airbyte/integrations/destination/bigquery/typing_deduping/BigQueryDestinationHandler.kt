@@ -61,7 +61,7 @@ class BigQueryDestinationHandler(private val bq: BigQuery, private val datasetLo
             SELECT TIMESTAMP_SUB(MIN(_airbyte_extracted_at), INTERVAL 1 MICROSECOND)
             FROM ${'$'}{raw_table}
             WHERE _airbyte_loaded_at IS NULL
-            
+
             """.trimIndent()
                                 )
                         )
@@ -96,7 +96,7 @@ class BigQueryDestinationHandler(private val bq: BigQuery, private val datasetLo
                                     """
             SELECT MAX(_airbyte_extracted_at)
             FROM ${'$'}{raw_table}
-            
+
             """.trimIndent()
                                 )
                         )
@@ -122,6 +122,17 @@ class BigQueryDestinationHandler(private val bq: BigQuery, private val datasetLo
     private fun getFinalTableGeneration(id: StreamId, suffix: String): Long? {
         val finalTable = bq.getTable(TableId.of(id.finalNamespace, id.finalName + suffix))
         if (finalTable == null || !finalTable.exists()) {
+            return null
+        }
+
+        val tableDef = finalTable.getDefinition<StandardTableDefinition>()
+        val hasGenerationId: Boolean =
+            tableDef.schema
+                ?.fields
+                // Field doesn't have a hasColumn(String) method >.>
+                ?.any { it.name == JavaBaseConstants.COLUMN_NAME_AB_GENERATION_ID }
+                ?: false
+        if (!hasGenerationId) {
             return null
         }
 
