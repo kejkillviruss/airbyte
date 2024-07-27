@@ -785,7 +785,7 @@ abstract class DestinationAcceptanceTest(
                 .withDestinationSyncMode(DestinationSyncMode.APPEND)
                 .withSyncId(42)
                 .withGenerationId(12)
-                .withMinimumGenerationId(12)
+                .withMinimumGenerationId(0)
         }
 
         val firstSyncMessages: List<AirbyteMessage> =
