@@ -41,7 +41,7 @@ class SnowflakeSqlGeneratorIntegrationTest : BaseSqlGeneratorIntegrationTest<Sno
         get() = true
 
     override val sqlGenerator: SnowflakeSqlGenerator
-        get() = SnowflakeSqlGenerator(0)
+        get() = SnowflakeSqlGenerator(0, true)
 
     override val destinationHandler: SnowflakeDestinationHandler
         get() = SnowflakeDestinationHandler(databaseName, database, namespace.uppercase())
